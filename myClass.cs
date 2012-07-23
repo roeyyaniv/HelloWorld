@@ -27,4 +27,10 @@ public static class Utils
     {
         AdsDB = new OVFM.Data.ovfmDB();
     }
+	
+	public static void DoSomething()
+	{
+		string s="something";
+		return;
+	}
 }
