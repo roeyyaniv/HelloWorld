@@ -27,4 +27,38 @@ public static class Utils
     {
         AdsDB = new OVFM.Data.ovfmDB();
     }
+	
+	public static void WriteToLog(Exception ex, string sURL, string sUserid, string sIP, string sPageURL, cbl.Syslog.Level cllevel)
+    {
+
+        string sErrorToFile = ex.ToString() + "| " + DateTime.Now.ToString() + "| " + sUserid + "| " + sIP + "| " + sURL;
+
+        cbl.Syslog.Client c = new cbl.Syslog.Client();
+        try
+        {
+            string sSysLogServer = System.Configuration.ConfigurationManager.AppSettings["SysLogServer"].ToString();
+            int iSysLogacility = Convert.ToInt16(System.Configuration.ConfigurationManager.AppSettings["SysLogFacility"]);
+
+            int isyslevel = Convert.ToInt16(System.Configuration.ConfigurationManager.AppSettings["SysLogLevel"]);
+
+            int level = (int)cllevel;
+
+            if (level > isyslevel)
+                return;
+
+            c.HostIp = sSysLogServer;
+            int facility = iSysLogacility;
+            string text = sErrorToFile;
+
+            c.Send(new cbl.Syslog.Message(facility, level, text));
+        }
+        catch (System.Exception ex1)
+        {
+
+        }
+        finally
+        {
+            c.Close();
+        }
+    }
 }
